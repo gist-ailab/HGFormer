@@ -65,6 +65,7 @@ from hgformer import (
     SemanticSegmentorWithTTA,
     add_maskformer2_config,
 )
+from mask2former.data.datasets.lars_semantic import load_lars_semantic, load_lars_semantic_val
 
 
 class Trainer(DefaultTrainer):
@@ -305,6 +306,13 @@ def setup(args):
 
 def main(args):
     cfg = setup(args)
+
+    if 'lars_sem_seg_train' in cfg.DATASETS.TRAIN:
+        DatasetCatalog.register("lars_sem_seg_train", load_lars_semantic)
+        # MetadataCatalog.register("my_dataset", load_lars_semantic)
+    if 'lars_sem_seg_val' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("lars_sem_seg_val", load_lars_semantic_val)
+        # MetadataCatalog.register("my_dataset", load_lars_semantic)
 
     if args.eval_only:
         model = Trainer.build_model(cfg)

@@ -7,7 +7,7 @@ import torch
 from torch.nn import functional as F
 
 from detectron2.config import configurable
-from detectron2.data import MetadataCatalog
+from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.data import detection_utils as utils
 from detectron2.data import transforms as T
 from detectron2.projects.point_rend import ColorAugSSDTransform
@@ -84,16 +84,27 @@ class MaskFormerSemanticDatasetMapper:
 
         # Assume always applies to the training set.
         dataset_names = cfg.DATASETS.TRAIN
-        meta = MetadataCatalog.get(dataset_names[0])
-        ignore_label = meta.ignore_label
+        if dataset_names[0] == "lars_sem_seg_train" or dataset_names[0] == "lars_sem_seg_val":
+            # For LaRS dataset, we need to use the DatasetCatalog to get the metadata
+            meta = DatasetCatalog.get(dataset_names[0])
+            ret = {
+                "is_train": is_train,
+                "augmentations": augs,
+                "image_format": cfg.INPUT.FORMAT,
+                "ignore_label": None,
+                "size_divisibility": cfg.INPUT.SIZE_DIVISIBILITY,
+            }
+        else:
+            meta = MetadataCatalog.get(dataset_names[0])
+            ignore_label = meta.ignore_label
 
-        ret = {
-            "is_train": is_train,
-            "augmentations": augs,
-            "image_format": cfg.INPUT.FORMAT,
-            "ignore_label": ignore_label,
-            "size_divisibility": cfg.INPUT.SIZE_DIVISIBILITY,
-        }
+            ret = {
+                "is_train": is_train,
+                "augmentations": augs,
+                "image_format": cfg.INPUT.FORMAT,
+                "ignore_label": ignore_label,
+                "size_divisibility": cfg.INPUT.SIZE_DIVISIBILITY,
+            }
         return ret
 
     def __call__(self, dataset_dict):
