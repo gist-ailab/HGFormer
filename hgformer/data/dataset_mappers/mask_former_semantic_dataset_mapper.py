@@ -87,11 +87,12 @@ class MaskFormerSemanticDatasetMapper:
         if dataset_names[0] == "lars_sem_seg_train" or dataset_names[0] == "lars_sem_seg_val":
             # For LaRS dataset, we need to use the DatasetCatalog to get the metadata
             meta = DatasetCatalog.get(dataset_names[0])
+            ignore_label = 255
             ret = {
                 "is_train": is_train,
                 "augmentations": augs,
                 "image_format": cfg.INPUT.FORMAT,
-                "ignore_label": None,
+                "ignore_label": ignore_label,
                 "size_divisibility": cfg.INPUT.SIZE_DIVISIBILITY,
             }
         else:
