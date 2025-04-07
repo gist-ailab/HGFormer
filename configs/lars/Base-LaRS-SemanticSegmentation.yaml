@@ -16,7 +16,7 @@ MODEL:
 
 DATASETS:
   TRAIN: ("lars_sem_seg_train",)
-  TEST: ("lars_sem_seg_val")
+  TEST: ("lars_sem_seg_val",)
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.0001

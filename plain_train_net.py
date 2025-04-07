@@ -69,6 +69,7 @@ from hgformer import (
     SemanticSegmentorWithTTA,
     add_maskformer2_config,
 )
+from hgformer.data.datasets.lars_semantic import load_lars_semantic, load_lars_semantic_val
 
 
 def create_ddp_model(model, *, fp16_compression=False, **kwargs):
@@ -150,7 +151,10 @@ class Trainer(DefaultTrainer):
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
         evaluator_list = []
-        evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
+        if dataset_name == 'lars_sem_seg_val':
+            evaluator_type = "sem_seg"
+        else:
+            evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
         # semantic segmentation
         if evaluator_type in ["sem_seg", "ade20k_panoptic_seg"]:
             evaluator_list.append(
@@ -364,6 +368,13 @@ def setup(args):
 
 def main(args):
     cfg = setup(args)
+
+    if 'lars_sem_seg_train' in cfg.DATASETS.TRAIN:
+        DatasetCatalog.register("lars_sem_seg_train", load_lars_semantic)
+        # MetadataCatalog.register("my_dataset", load_lars_semantic)
+    if 'lars_sem_seg_val' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("lars_sem_seg_val", load_lars_semantic_val)
+        # MetadataCatalog.register("my_dataset", load_lars_semantic)
 
     if args.eval_only:
         model = Trainer.build_model(cfg)

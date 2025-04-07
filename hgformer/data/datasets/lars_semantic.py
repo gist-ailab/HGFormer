@@ -61,7 +61,7 @@ def load_lars_semantic(image_dir='../dset/LaRS/lars_v1.0.0_images/train/images',
         
         width, height = Image.open(label_file).size
         # print(height, width)
-        print("height, width", height, width)
+        # print("height, width", height, width)
 
         ret.append(
             {
