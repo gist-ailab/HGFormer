@@ -1,3 +1,5 @@
+# python demo/inference.py --config-file configs/lars/hgformer_swin_large_IN21K_384_bs16_20k.yaml --input [../dset/LaRS/lars_v1.0.0_images/val/images/inhouse_seq_198_00039.jpg] --output outputs/lars/swin_large/vis --opts MODEL.WEIGHTS outputs/lars/swin_large/model_final.pth
+
 # Copyright (c) Facebook, Inc. and its affiliates.
 # Modified by Bowen Cheng from: https://github.com/facebookresearch/detectron2/blob/master/demo/demo.py
 import argparse
@@ -120,7 +122,9 @@ if __name__ == "__main__":
     demo = VisualizationDemo(cfg)
 
     # import ipdb; ipdb.set_trace()
-    filelist = GetFileFromThisRootDir(args.input[0])
+    # filelist = GetFileFromThisRootDir(args.input[0])
+    # filelist = ["../dset/LaRS/lars_v1.0.0_images/val/images/inhouse_seq_198_00039.jpg"]
+    filelist = glob.glob("../dset/LaRS/lars_v1.0.0_images/val/images/*.jpg")
     for path in tqdm.tqdm(filelist, disable=not args.output):
         # use PIL, to be consistent with evaluation
         img = read_image(path, format="BGR")
@@ -144,5 +148,6 @@ if __name__ == "__main__":
             os.makedirs(args.output)
         output_path = os.path.join(args.output, basename)
 
-        outimg = predictions['sem_seg'].detach().cpu().numpy().argmax(0).astype(np.uint8)
+        outimg = predictions['sem_seg'].detach().cpu().numpy().argmax(0).astype(np.uint8) * 70
+        # print(np.unique(outimg))
         cv2.imwrite(output_path, outimg)
