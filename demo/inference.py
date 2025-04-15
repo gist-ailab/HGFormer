@@ -1,4 +1,4 @@
-# python demo/inference.py --config-file configs/lars/hgformer_swin_large_IN21K_384_bs16_20k.yaml --input [../dset/LaRS/lars_v1.0.0_images/val/images/inhouse_seq_198_00039.jpg] --output outputs/lars/swin_large/vis --opts MODEL.WEIGHTS outputs/lars/swin_large/model_final.pth
+# python demo/inference.py --config-file configs/lars/hgformer_swin_large_IN21K_384_bs16_20k.yaml --output outputs/lars/swin_large/vis --opts MODEL.WEIGHTS outputs/lars/swin_large/model_final.pth
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # Modified by Bowen Cheng from: https://github.com/facebookresearch/detectron2/blob/master/demo/demo.py
@@ -110,6 +110,23 @@ def test_opencv_video_format(codec, file_ext):
         return False
 
 
+MERGE_SHIP_WITH_LAND = True
+
+def mask_to_palette(mask, palette):
+    mask = mask.astype(int)
+    color_mask = np.zeros((mask.shape[0], mask.shape[1], 3), dtype=np.uint8)
+    for i in range(len(palette)):
+        if i == 3 and MERGE_SHIP_WITH_LAND:
+            rgb = palette[0]
+        else:
+            rgb = palette[i]
+        bgr = [rgb[2], rgb[1], rgb[0]]
+        color_mask[mask == i] = bgr
+    return color_mask
+
+palette = [[247, 195, 37], [41, 167, 224], [90, 75, 164], [224, 58, 31], [0, 0, 0]]
+
+
 if __name__ == "__main__":
     mp.set_start_method("spawn", force=True)
     args = get_parser().parse_args()
@@ -148,6 +165,6 @@ if __name__ == "__main__":
             os.makedirs(args.output)
         output_path = os.path.join(args.output, basename)
 
-        outimg = predictions['sem_seg'].detach().cpu().numpy().argmax(0).astype(np.uint8) * 70
-        # print(np.unique(outimg))
-        cv2.imwrite(output_path, outimg)
+        outimg = predictions['sem_seg'].detach().cpu().numpy().argmax(0).astype(np.uint8)
+        outimg = mask_to_palette(outimg, palette)
+        cv2.imwrite(output_path.replace('.jpg', '.png'), outimg)
