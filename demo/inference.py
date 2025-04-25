@@ -141,7 +141,7 @@ if __name__ == "__main__":
     # import ipdb; ipdb.set_trace()
     # filelist = GetFileFromThisRootDir(args.input[0])
     # filelist = ["../dset/LaRS/lars_v1.0.0_images/val/images/inhouse_seq_198_00039.jpg"]
-    filelist = glob.glob("../dset/LaRS/lars_v1.0.0_images/val/images/*.jpg")
+    filelist = glob.glob("../dset/LaRS/lars_v1.0.0_images/test/images/*.jpg")
     for path in tqdm.tqdm(filelist, disable=not args.output):
         # use PIL, to be consistent with evaluation
         img = read_image(path, format="BGR")
