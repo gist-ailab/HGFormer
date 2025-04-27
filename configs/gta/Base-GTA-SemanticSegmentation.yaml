@@ -16,7 +16,7 @@ MODEL:
 
 DATASETS:
   TRAIN: ("gta_sem_seg_train",)
-  TEST: ("cityscapes_fine_sem_seg_val",)
+  TEST: ("cityscapes_fine_sem_seg_val", "bdd_sem_seg_val", "map_sem_seg_val",)
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.0001
