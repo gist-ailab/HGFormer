@@ -17,7 +17,7 @@ from detectron2.utils.logger import setup_logger
 logger = logging.getLogger(__name__)
 
 
-def _get_lars_files(image_dir, gt_dir):
+def _get_bdd_files(image_dir, gt_dir):
     files = []
     # scan through the directory
     images_path = PathManager.ls(image_dir)
@@ -40,44 +40,42 @@ def _get_lars_files(image_dir, gt_dir):
     return files
 
 
-def load_lars_semantic(image_dir='../dset/LaRS/lars_v1.0.0_images/train/images', gt_dir='../dset/LaRS/lars_v1.0.0_annotations/train/semantic_masks_4cls'):
-    """
-    Args:
-        image_dir (str): path to the raw dataset. e.g., "dset/LaRS/lars_v1.0.0_images/train/images".
-        gt_dir (str): path to the raw annotations. e.g., "dset/LaRS/lars_v1.0.0_annotations/train/semantic_masks_4cls".
+# def load_gta_semantic(image_dir='/home/jovyan/SSDb/seongju_lee/dset/gta/images', gt_dir='/home/jovyan/SSDb/seongju_lee/dset/gta/labels'):
+#     """
+#     Args:
+#         image_dir (str): path to the raw dataset. e.g., "dset/LaRS/lars_v1.0.0_images/train/images".
+#         gt_dir (str): path to the raw annotations. e.g., "dset/LaRS/lars_v1.0.0_annotations/train/semantic_masks_4cls".
 
-    Returns:
-        list[dict]: a list of dict, each has "file_name" and
-            "sem_seg_file_name".
-    """
-    ret = []
-    # gt_dir is small and contain many small files. make sense to fetch to local first
-    gt_dir = PathManager.get_local_path(gt_dir)
-    for image_file, label_file in _get_lars_files(image_dir, gt_dir):
-        label_file = label_file.replace("labelIds", "labelTrainIds")
+#     Returns:
+#         list[dict]: a list of dict, each has "file_name" and
+#             "sem_seg_file_name".
+#     """
+#     ret = []
+#     # gt_dir is small and contain many small files. make sense to fetch to local first
+#     gt_dir = PathManager.get_local_path(gt_dir)
+#     for image_file, label_file in _get_gta_files(image_dir, gt_dir):
+#         # label_file = label_file.replace("labelIds", "labelTrainIds")
 
-        # with PathManager.open(json_file, "r") as f:
-        #     jsonobj = json.load(f)
+#         # with PathManager.open(json_file, "r") as f:
+#         #     jsonobj = json.load(f)
         
-        width, height = Image.open(label_file).size
-        # print(height, width)
-        # print("height, width", height, width)
+#         width, height = Image.open(image_file).size
 
-        ret.append(
-            {
-                "file_name": image_file,
-                "sem_seg_file_name": label_file,
-                "height": height,
-                "width": width,
-            }
-        )
-    assert len(ret), f"No images found in {image_dir}!"
-    assert PathManager.isfile(
-        ret[0]["sem_seg_file_name"]
-    ), "Please generate labelTrainIds.png with cityscapesscripts/preparation/createTrainIdLabelImgs.py"  # noqa
-    return ret
+#         ret.append(
+#             {
+#                 "file_name": image_file,
+#                 "sem_seg_file_name": label_file,
+#                 "height": height,
+#                 "width": width,
+#             }
+#         )
+#     assert len(ret), f"No images found in {image_dir}!"
+#     assert PathManager.isfile(
+#         ret[0]["sem_seg_file_name"]
+#     ), "Please generate labelTrainIds.png with cityscapesscripts/preparation/createTrainIdLabelImgs.py"  # noqa
+#     return ret
 
-def load_lars_semantic_val(image_dir='../dset/LaRS/lars_v1.0.0_images/val/images', gt_dir='../dset/LaRS/lars_v1.0.0_annotations/val/semantic_masks_4cls'):
+def load_bdd_semantic_val(image_dir='/home/jovyan/SSDb/seongju_lee/dset/bdd100k/images/10k/val', gt_dir='/home/jovyan/SSDb/seongju_lee/dset/bdd100k/labels/sem_seg/masks/val'):
     """
     Args:
         image_dir (str): path to the raw dataset. e.g., "dset/LaRS/lars_v1.0.0_images/train/images".
@@ -90,8 +88,8 @@ def load_lars_semantic_val(image_dir='../dset/LaRS/lars_v1.0.0_images/val/images
     ret = []
     # gt_dir is small and contain many small files. make sense to fetch to local first
     gt_dir = PathManager.get_local_path(gt_dir)
-    for image_file, label_file in _get_lars_files(image_dir, gt_dir):
-        label_file = label_file.replace("labelIds", "labelTrainIds")
+    for image_file, label_file in _get_bdd_files(image_dir, gt_dir):
+        # label_file = label_file.replace("labelIds", "labelTrainIds")
 
         # with PathManager.open(json_file, "r") as f:
         #     jsonobj = json.load(f)

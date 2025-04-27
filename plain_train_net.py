@@ -60,6 +60,9 @@ from detectron2.utils.events import EventStorage
 from detectron2.utils.logger import _log_api_usage
 import csv
 
+import warnings
+warnings.filterwarnings("ignore")
+
 # MaskFormer
 from hgformer import (
     InstanceSegEvaluator,
@@ -70,6 +73,9 @@ from hgformer import (
     add_maskformer2_config,
 )
 from hgformer.data.datasets.lars_semantic import load_lars_semantic, load_lars_semantic_val
+from hgformer.data.datasets.gta_semantic import load_gta_semantic
+from hgformer.data.datasets.bdd_semantic import load_bdd_semantic_val
+from hgformer.data.datasets.map_semantic import load_map_semantic_val
 
 
 def create_ddp_model(model, *, fp16_compression=False, **kwargs):
@@ -369,12 +375,29 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
+    if 'gta_sem_seg_train' in cfg.DATASETS.TRAIN:
+        DatasetCatalog.register("gta_sem_seg_train", load_gta_semantic)
     if 'lars_sem_seg_train' in cfg.DATASETS.TRAIN:
         DatasetCatalog.register("lars_sem_seg_train", load_lars_semantic)
         # MetadataCatalog.register("my_dataset", load_lars_semantic)
+    if 'bdd_sem_seg_val' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("bdd_sem_seg_val", load_bdd_semantic_val)
+        MetadataCatalog.get("bdd_sem_seg_val").set(
+            evaluator_type="sem_seg",
+            ignore_label=255,
+            stuff_classes=MetadataCatalog.get("cityscapes_fine_sem_seg_train").stuff_classes
+        )
+    if 'map_sem_seg_val' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("map_sem_seg_val", load_map_semantic_val)
+        MetadataCatalog.get("map_sem_seg_val").set(
+            evaluator_type="sem_seg",
+            ignore_label=255,
+            stuff_classes=MetadataCatalog.get("cityscapes_fine_sem_seg_train").stuff_classes
+        )
     if 'lars_sem_seg_val' in cfg.DATASETS.TEST:
         DatasetCatalog.register("lars_sem_seg_val", load_lars_semantic_val)
         # MetadataCatalog.register("my_dataset", load_lars_semantic)
+    
 
     if args.eval_only:
         model = Trainer.build_model(cfg)

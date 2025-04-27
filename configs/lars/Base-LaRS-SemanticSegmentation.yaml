@@ -28,7 +28,7 @@ SOLVER:
   LR_SCHEDULER_NAME: "WarmupPolyLR"
   BACKBONE_MULTIPLIER: 0.1
   # dense period for job array on gpu22
-  CHECKPOINT_PERIOD: 1000
+  CHECKPOINT_PERIOD: 5000
   CLIP_GRADIENTS:
     ENABLED: True
     CLIP_TYPE: "full_model"
