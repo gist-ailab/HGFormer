@@ -1,1 +1,2 @@
 CUDA_VISIBLE_DEVICES=0,1,2,3 python plain_train_net.py --dist-url 'tcp://127.0.0.1:8471' --num-gpus 4 --config-file configs/gta/hgformer_swin_large_IN21K_384_bs16_20k.yaml OUTPUT_DIR ./outputs_gta
+CUDA_VISIBLE_DEVICES=0,1,2,3 python plain_train_net.py --dist-url 'tcp://127.0.0.1:8471' --num-gpus 4 --config-file configs/wilds/hgformer_swin_large_IN21K_384_bs16_20k.yaml OUTPUT_DIR ./outputs_wilds

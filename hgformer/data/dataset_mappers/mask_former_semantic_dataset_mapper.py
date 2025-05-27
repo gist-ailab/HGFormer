@@ -84,7 +84,7 @@ class MaskFormerSemanticDatasetMapper:
 
         # Assume always applies to the training set.
         dataset_names = cfg.DATASETS.TRAIN
-        if dataset_names[0] == "lars_sem_seg_train" or dataset_names[0] == "lars_sem_seg_val" or dataset_names[0] == "gta_sem_seg_train" or dataset_names[0] == "bdd_sem_seg_val" or dataset_names[0] == "map_sem_seg_val":
+        if dataset_names[0] == "lars_sem_seg_train" or dataset_names[0] == "lars_sem_seg_val" or dataset_names[0] == "gta_sem_seg_train" or dataset_names[0] == "bdd_sem_seg_val" or dataset_names[0] == "map_sem_seg_val" or dataset_names[0] == "wilds_sem_seg_train":
             # For LaRS dataset, we need to use the DatasetCatalog to get the metadata
             meta = DatasetCatalog.get(dataset_names[0])
             ignore_label = 255

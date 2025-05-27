@@ -77,6 +77,10 @@ from hgformer.data.datasets.gta_semantic import load_gta_semantic
 from hgformer.data.datasets.bdd_semantic import load_bdd_semantic_val
 from hgformer.data.datasets.map_semantic import load_map_semantic_val
 
+from hgformer.data.datasets.wilds_semantic import load_wilds_semantic
+from hgformer.data.datasets.rugd_semantic import load_rugd_semantic_test
+from hgformer.data.datasets.rellis_semantic import load_rellis_semantic_test
+
 
 def create_ddp_model(model, *, fp16_compression=False, **kwargs):
     """
@@ -380,6 +384,8 @@ def main(args):
     if 'lars_sem_seg_train' in cfg.DATASETS.TRAIN:
         DatasetCatalog.register("lars_sem_seg_train", load_lars_semantic)
         # MetadataCatalog.register("my_dataset", load_lars_semantic)
+    if 'wilds_sem_seg_train' in cfg.DATASETS.TRAIN:
+        DatasetCatalog.register("wilds_sem_seg_train", load_wilds_semantic)
     if 'bdd_sem_seg_val' in cfg.DATASETS.TEST:
         DatasetCatalog.register("bdd_sem_seg_val", load_bdd_semantic_val)
         MetadataCatalog.get("bdd_sem_seg_val").set(
@@ -397,8 +403,22 @@ def main(args):
     if 'lars_sem_seg_val' in cfg.DATASETS.TEST:
         DatasetCatalog.register("lars_sem_seg_val", load_lars_semantic_val)
         # MetadataCatalog.register("my_dataset", load_lars_semantic)
-    
+    if 'rugd_sem_seg_test' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("rugd_sem_seg_test", load_rugd_semantic_test)
+        MetadataCatalog.get("rugd_sem_seg_test").set(
+            evaluator_type="sem_seg",
+            ignore_label=255,
+            stuff_classes=["dirt", "gravel", "mud", "bush", "grass", "log", "tree", "fence", "other-object", "rock", "structure", "water", "sky"]
+        )
 
+    if 'rellis_sem_seg_test' in cfg.DATASETS.TEST:
+        DatasetCatalog.register("rellis_sem_seg_test", load_rellis_semantic_test)
+        MetadataCatalog.get("rellis_sem_seg_test").set(
+            evaluator_type="sem_seg",
+            ignore_label=255,
+            stuff_classes=["dirt", "gravel", "mud", "bush", "grass", "log", "tree", "fence", "other-object", "rock", "structure", "water", "sky"]
+        )
+    
     if args.eval_only:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
